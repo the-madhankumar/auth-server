@@ -150,8 +150,8 @@ export class AuthClient {
       } else if (typeof globalThis !== 'undefined' && (globalThis as any).Buffer) {
         payloadJson = (globalThis as any).Buffer.from(payloadBase64, 'base64').toString('utf8');
       } else {
-        // Can't decode, assume it's valid if we have it (fallback)
-        return false;
+        // Can't decode, fail securely by treating it as expired
+        return true;
       }
       
       const decoded = JSON.parse(payloadJson);
