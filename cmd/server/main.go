@@ -42,7 +42,7 @@ func main() {
 	db := config.InitDatabase(cfg)
 
 	// Auto-migrate database models
-	err := config.AutoMigrate(db, 		&models.User{},
+	err := config.AutoMigrate(db, &models.User{},
 		&models.RefreshToken{},
 		&models.VerificationToken{},
 		&models.PasswordResetToken{},
@@ -66,7 +66,7 @@ func main() {
 	}
 
 	router := gin.Default()
-	
+
 	// Load HTML templates for OAuth consent
 	router.LoadHTMLGlob("templates/*")
 

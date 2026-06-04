@@ -30,6 +30,7 @@ func setupOAuthUserInfoRouter(t *testing.T) (*gin.Engine, *repository.UserReposi
 		repository.NewAuthorizationCodeRepository(db),
 		tokenRepo,
 		repository.NewUserConsentRepository(db),
+		repository.NewOAuthProviderConfigRepository(db),
 		service.NewTokenService(&config.Config{
 			JWT: config.JWTConfig{AccessSecret: "secret", RefreshSecret: "refresh"},
 		}),
@@ -75,6 +76,7 @@ func TestNewOAuthHandlerPanicsWithoutUserRepository(t *testing.T) {
 		repository.NewAuthorizationCodeRepository(db),
 		tokenRepo,
 		repository.NewUserConsentRepository(db),
+		repository.NewOAuthProviderConfigRepository(db),
 		service.NewTokenService(&config.Config{
 			JWT: config.JWTConfig{AccessSecret: "secret", RefreshSecret: "refresh"},
 		}),

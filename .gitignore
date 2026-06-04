@@ -34,3 +34,8 @@ Thumbs.db
 # Database
 *.db
 *.sqlite3
+
+# Node/JavaScript
+node_modules/
+dist/
+.DS_Store

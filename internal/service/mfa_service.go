@@ -3,9 +3,9 @@ package service
 import (
 	"bytes"
 	"encoding/base64"
-	"image/png"
 	"github.com/pquerna/otp/totp"
 	"github.com/roshankumar0036singh/auth-server/internal/config"
+	"image/png"
 )
 
 type MFAService struct {
@@ -34,11 +34,11 @@ func (s *MFAService) GenerateMFA(userEmail string) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	
+
 	if err := png.Encode(&buf, img); err != nil {
 		return "", "", err
 	}
-	
+
 	qrCodeBase64 := base64.StdEncoding.EncodeToString(buf.Bytes())
 	qrCodeURL := "data:image/png;base64," + qrCodeBase64
 

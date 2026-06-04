@@ -15,12 +15,12 @@ type RefreshToken struct {
 	IsRevoked bool      `gorm:"default:false;index" json:"isRevoked"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	
+
 	// Device information for session tracking
-	IPAddress string `gorm:"size:45" json:"ipAddress,omitempty"`   // IPv6 max length
+	IPAddress string `gorm:"size:45" json:"ipAddress,omitempty"` // IPv6 max length
 	UserAgent string `gorm:"size:500" json:"userAgent,omitempty"`
-	DeviceID  string `gorm:"size:255" json:"deviceId,omitempty"`   // For device tracking
-	
+	DeviceID  string `gorm:"size:255" json:"deviceId,omitempty"` // For device tracking
+
 	// Relationship
 	User User `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"-"`
 }

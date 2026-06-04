@@ -9,7 +9,7 @@ import (
 
 func InitRedis(cfg *Config) *redis.Client {
 	ctx := context.Background() // Local context variable
-	
+
 	opt, err := redis.ParseURL(cfg.Redis.URL)
 	if err != nil {
 		log.Fatal("Failed to parse Redis URL:", err)

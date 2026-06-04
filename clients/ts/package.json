@@ -1,0 +1,66 @@
+{
+  "name": "@roshankumar0036singh/auth-server-client",
+  "version": "1.0.0",
+  "description": "Official TypeScript SDK for the Auth Server — auto token refresh, session persistence, React bindings",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.mjs",
+      "require": "./dist/react/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts src/react/index.tsx --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts src/react/index.tsx --format cjs,esm --dts --watch",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "auth",
+    "authentication",
+    "sdk",
+    "oauth",
+    "react",
+    "typescript",
+    "jwt",
+    "mfa"
+  ],
+  "author": "Roshan Kumar Singh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roshankumar0036singh/auth-server"
+  },
+  "homepage": "https://github.com/roshankumar0036singh/auth-server/tree/main/clients/ts#readme",
+  "devDependencies": {
+    "@types/react": "^19.2.16",
+    "@types/react-dom": "^19.2.3",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  }
+}

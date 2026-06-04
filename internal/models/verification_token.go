@@ -13,7 +13,7 @@ type VerificationToken struct {
 	Token     string    `gorm:"type:varchar(255);uniqueIndex;not null" json:"token"`
 	ExpiresAt time.Time `gorm:"not null" json:"expiresAt"`
 	CreatedAt time.Time `json:"createdAt"`
-	
+
 	// Relationship
 	User User `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"-"`
 }

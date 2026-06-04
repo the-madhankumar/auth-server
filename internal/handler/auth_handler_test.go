@@ -18,9 +18,9 @@ func SetupRouter(t *testing.T) (*gin.Engine, *handler.AuthHandler) {
 	authService, _, mr := testutils.SetupIntegrationTest(t)
 	// mock OAuth service or pass nil if not needed for these tests
 	authHandler := handler.NewAuthHandler(authService, nil)
-	
+
 	t.Cleanup(func() { mr.Close() }) // Ensure mr is closed after tests in this Setup config
-	
+
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 	r.Use(gin.Recovery())
@@ -29,7 +29,6 @@ func SetupRouter(t *testing.T) (*gin.Engine, *handler.AuthHandler) {
 	// For testing, we just register what we need
 	return r, authHandler
 }
-
 
 func TestAuthHandler_Register(t *testing.T) {
 	r, h := SetupRouter(t)

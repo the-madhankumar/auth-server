@@ -5,9 +5,9 @@ import "github.com/gin-gonic/gin"
 // Response structures for consistent API responses
 
 type Response struct {
-	Success bool        `json:"success"`
-	Message string      `json:"message,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
+	Success bool         `json:"success"`
+	Message string       `json:"message,omitempty"`
+	Data    interface{}  `json:"data,omitempty"`
 	Error   *ErrorDetail `json:"error,omitempty"`
 }
 

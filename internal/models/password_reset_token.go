@@ -14,7 +14,7 @@ type PasswordResetToken struct {
 	ExpiresAt time.Time `gorm:"not null" json:"expiresAt"`
 	Used      bool      `gorm:"default:false" json:"used"`
 	CreatedAt time.Time `json:"createdAt"`
-	
+
 	// Relationship
 	User User `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"-"`
 }

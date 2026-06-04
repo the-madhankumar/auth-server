@@ -5,13 +5,18 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/roshankumar0036singh/auth-server/internal/config"
 )
 
 // CORSMiddleware configures CORS for the application
-func CORSMiddleware() gin.HandlerFunc {
+func CORSMiddleware(cfg *config.Config) gin.HandlerFunc {
+	allowOrigins := []string{"http://localhost:3000", "http://localhost:5173"}
+	if cfg != nil && cfg.App.URL != "" {
+		allowOrigins = append(allowOrigins, cfg.App.URL)
+	}
+
 	return cors.New(cors.Config{
-		// AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173"}, 
-		AllowAllOrigins:  true,
+		AllowOrigins:     allowOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

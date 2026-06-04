@@ -9,6 +9,8 @@ import (
 	"github.com/roshankumar0036singh/auth-server/internal/utils"
 )
 
+const errUserNotAuthenticated = "User not authenticated"
+
 type OAuthClientHandler struct {
 	oauthProviderService *service.OAuthProviderService
 }
@@ -41,7 +43,7 @@ func (h *OAuthClientHandler) CreateOAuthClient(c *gin.Context) {
 	// Get current user ID from context
 	userID, exists := c.Get("userID")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse("User not authenticated"))
+		c.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse(errUserNotAuthenticated))
 		return
 	}
 
@@ -85,7 +87,7 @@ func (h *OAuthClientHandler) CreateOAuthClient(c *gin.Context) {
 func (h *OAuthClientHandler) ListOAuthClients(c *gin.Context) {
 	userID, exists := c.Get("userID")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse("User not authenticated"))
+		c.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse(errUserNotAuthenticated))
 		return
 	}
 
@@ -107,17 +109,17 @@ func (h *OAuthClientHandler) ListOAuthClients(c *gin.Context) {
 // @Tags OAuth Client
 // @Produce json
 // @Security BearerAuth
-// @Param id path string true "Client ID (UUID)"
+// @Param clientId path string true "Client ID (UUID)"
 // @Success 200 {object} utils.SuccessResponse
 // @Failure 401 {object} utils.ErrorResponse
 // @Failure 403 {object} utils.ErrorResponse
 // @Failure 404 {object} utils.ErrorResponse
-// @Router /api/auth/oauth/clients/{id} [delete]
+// @Router /api/auth/oauth/clients/{clientId} [delete]
 func (h *OAuthClientHandler) DeleteOAuthClient(c *gin.Context) {
-	clientID := c.Param("id")
+	clientID := c.Param("clientId")
 	userID, exists := c.Get("userID")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse("User not authenticated"))
+		c.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse(errUserNotAuthenticated))
 		return
 	}
 
@@ -143,12 +145,12 @@ type CreateOAuthClientResponse struct {
 }
 
 type OAuthClientData struct {
-	ID           string   `json:"id"`
-	Name         string   `json:"name"`
-	ClientID     string   `json:"client_id"`
-	ClientSecret string   `json:"client_secret"` // Only in creation response
-	RedirectURIs []string `json:"redirect_uris"`
-	Scopes       []string `json:"scopes"`
+	ID           string      `json:"id"`
+	Name         string      `json:"name"`
+	ClientID     string      `json:"client_id"`
+	ClientSecret string      `json:"client_secret"` // Only in creation response
+	RedirectURIs []string    `json:"redirect_uris"`
+	Scopes       []string    `json:"scopes"`
 	CreatedAt    interface{} `json:"created_at"`
 }
 

@@ -27,13 +27,14 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 	oauthCodeRepo := repository.NewAuthorizationCodeRepository(db)
 	oauthTokenRepo := repository.NewOAuthTokenRepository(db)
 	userConsentRepo := repository.NewUserConsentRepository(db)
+	oauthProviderConfigRepo := repository.NewOAuthProviderConfigRepository(db)
 
 	// Initialize services
 	tokenService := service.NewTokenService(cfg)
 	cacheService := service.NewCacheService(redisClient)
 	emailService := service.NewEmailService(cfg)
 	auditService := service.NewAuditService(auditRepo)
-	oauthService := service.NewOAuthService(cfg)
+	oauthService := service.NewOAuthService(cfg, oauthProviderConfigRepo)
 	mfaService := service.NewMFAService(cfg)
 
 	authService := service.NewAuthService(
@@ -55,6 +56,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 		oauthCodeRepo,
 		oauthTokenRepo,
 		userConsentRepo,
+		oauthProviderConfigRepo,
 		tokenService,
 		cfg,
 	)
@@ -66,7 +68,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 	oauthHandler := handler.NewOAuthHandler(oauthProviderService, userRepo)
 
 	// Apply global middleware
-	router.Use(middleware.CORSMiddleware())
+	router.Use(middleware.CORSMiddleware(cfg))
 	router.Use(middleware.SecurityMiddleware()) // Security headers
 
 	// Swagger Documentation (Custom UI)
@@ -137,7 +139,14 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 				{
 					oauthClients.POST("", oauthClientHandler.CreateOAuthClient)
 					oauthClients.GET("", oauthClientHandler.ListOAuthClients)
-					oauthClients.DELETE("/:id", oauthClientHandler.DeleteOAuthClient)
+					oauthClients.DELETE("/:clientId", oauthClientHandler.DeleteOAuthClient)
+
+					// OAuth Provider Configurations
+					oauthProviderConfigHandler := handler.NewOAuthProviderConfigHandler(oauthProviderService)
+					providerConfigPath := "/:clientId/providers/:provider"
+					oauthClients.POST(providerConfigPath, oauthProviderConfigHandler.CreateOrUpdateProviderConfig)
+					oauthClients.GET(providerConfigPath, oauthProviderConfigHandler.GetProviderConfig)
+					oauthClients.DELETE(providerConfigPath, oauthProviderConfigHandler.DeleteProviderConfig)
 				}
 			}
 		}

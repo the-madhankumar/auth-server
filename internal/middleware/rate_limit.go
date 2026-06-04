@@ -16,7 +16,7 @@ func RateLimitMiddleware(cacheService *service.CacheService, cfg *config.Config)
 	return func(c *gin.Context) {
 		ip := c.ClientIP()
 		key := fmt.Sprintf("ratelimit:%s", ip)
-		
+
 		// Use configured values (converted to proper types)
 		limit := cfg.Security.RateLimitMax
 		window := time.Duration(cfg.Security.RateLimitWindow) * time.Millisecond

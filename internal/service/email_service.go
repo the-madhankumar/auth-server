@@ -70,7 +70,7 @@ func (s *EmailService) SendEmail(to []string, subject string, templateName strin
 func (s *EmailService) SendVerificationEmail(email, token, appURL string) error {
 	// Assuming frontend route is /verify-email?token=...
 	verifyURL := fmt.Sprintf("%s/verify-email?token=%s", appURL, token)
-	
+
 	data := struct {
 		VerifyURL string
 		AppName   string
@@ -86,7 +86,7 @@ func (s *EmailService) SendVerificationEmail(email, token, appURL string) error 
 func (s *EmailService) SendPasswordResetEmail(email, token, appURL string) error {
 	// Assuming frontend route is /reset-password?token=...
 	resetURL := fmt.Sprintf("%s/reset-password?token=%s", appURL, token)
-	
+
 	data := struct {
 		ResetURL string
 		AppName  string
