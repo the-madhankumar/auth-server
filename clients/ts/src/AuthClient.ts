@@ -50,9 +50,9 @@ export class AuthClient {
     if (stored) {
       try {
         const session = JSON.parse(stored) as Session;
-        this.accessToken = session.access_token;
-        if (session.refresh_token) {
-          this.refreshToken = session.refresh_token;
+        this.accessToken = session.accessToken;
+        if (session.refreshToken) {
+          this.refreshToken = session.refreshToken;
         }
       } catch {
         storage.removeItem(this.storageKey);
@@ -61,22 +61,22 @@ export class AuthClient {
   }
 
   private saveSession(session: Session) {
-    this.accessToken = session.access_token;
-    if (session.refresh_token) {
-      this.refreshToken = session.refresh_token;
+    this.accessToken = session.accessToken;
+    if (session.refreshToken) {
+      this.refreshToken = session.refreshToken;
     }
 
     const storage = this.getStorage();
     if (storage) {
       storage.setItem(this.storageKey, JSON.stringify({
-        access_token: this.accessToken,
-        refresh_token: this.refreshToken
+        accessToken: this.accessToken,
+        refreshToken: this.refreshToken
       }));
     }
 
     this.notifyListeners({
-      access_token: session.access_token,
-      refresh_token: session.refresh_token || undefined,
+      accessToken: session.accessToken,
+      refreshToken: session.refreshToken || undefined,
       user: session.user,
     });
   }
@@ -102,7 +102,7 @@ export class AuthClient {
     this.listeners.add(callback);
     // Trigger immediately with current state
     if (this.accessToken) {
-      callback({ access_token: this.accessToken, refresh_token: this.refreshToken || undefined });
+      callback({ accessToken: this.accessToken, refreshToken: this.refreshToken || undefined });
     } else {
       callback(null);
     }
@@ -228,7 +228,7 @@ export class AuthClient {
   public async register(email: string, password: string, firstName: string, lastName: string): Promise<ApiResponse<User>> {
     return this.fetchApi<User>("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName }),
+      body: JSON.stringify({ email, password, firstName, lastName }),
     });
   }
 
@@ -256,7 +256,7 @@ export class AuthClient {
     this.isRefreshing = true;
     this.refreshPromise = this.fetchApi<Session>("/api/auth/refresh", {
       method: "POST",
-      body: JSON.stringify({ refresh_token: this.refreshToken }),
+      body: JSON.stringify({ refreshToken: this.refreshToken }),
     }).then(res => {
       this.saveSession(res.data);
       return res.data;
@@ -277,7 +277,7 @@ export class AuthClient {
       if (this.refreshToken) {
         await this.fetchApi("/api/auth/logout", {
           method: "POST",
-          body: JSON.stringify({ refresh_token: this.refreshToken }),
+          body: JSON.stringify({ refreshToken: this.refreshToken }),
         });
       }
     } catch {
@@ -328,7 +328,7 @@ export class AuthClient {
   public async updateProfile(firstName?: string, lastName?: string): Promise<User> {
     const data = await this.fetchApi<User>("/api/auth/profile", {
       method: "PUT",
-      body: JSON.stringify({ first_name: firstName, last_name: lastName }),
+      body: JSON.stringify({ firstName, lastName }),
     });
     return data.data;
   }
@@ -337,7 +337,7 @@ export class AuthClient {
   public async changePassword(currentPassword: string, newPassword: string): Promise<void> {
     await this.fetchApi("/api/auth/password", {
       method: "POST",
-      body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+      body: JSON.stringify({ currentPassword, newPassword }),
     });
   }
 
@@ -381,8 +381,8 @@ export class AuthClient {
   // --- MFA ---
 
   /** Enable MFA. Returns the TOTP secret and QR code data. */
-  public async enableMfa(): Promise<{ secret: string; qr_code: string }> {
-    const data = await this.fetchApi<{ secret: string; qr_code: string }>("/api/auth/mfa/enable", { method: "POST" });
+  public async enableMfa(): Promise<{ secret: string; qrCodeUrl: string }> {
+    const data = await this.fetchApi<{ secret: string; qrCodeUrl: string }>("/api/auth/mfa/enable", { method: "POST" });
     return data.data;
   }
 

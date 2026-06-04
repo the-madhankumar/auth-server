@@ -40,7 +40,7 @@ export function AuthProvider({ client, children }: AuthProviderProps) {
       if (!mounted) return;
       setSession(newSession);
 
-      if (!newSession?.access_token) {
+      if (!newSession?.accessToken) {
         setUser(null);
         setIsLoading(false);
         return;
