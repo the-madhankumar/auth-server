@@ -26,7 +26,7 @@ npm install @authserver/client
 import { AuthClient, AuthError } from '@authserver/client';
 
 const auth = new AuthClient({
-  serverUrl: 'https://your-auth-server.com',
+  serverUrl: 'https://auth-server-4nmm.onrender.com',
   clientId: 'your_oauth_client_id',
   storage: 'localStorage', // 'sessionStorage' | 'memory' (default)
 });
@@ -67,7 +67,7 @@ import { AuthClient } from '@authserver/client';
 import { AuthProvider } from '@authserver/client/react';
 
 const authClient = new AuthClient({
-  serverUrl: 'https://your-auth-server.com',
+  serverUrl: 'https://auth-server-4nmm.onrender.com',
   clientId: 'your_oauth_client_id',
   storage: 'localStorage',
 });

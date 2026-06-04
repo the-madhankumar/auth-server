@@ -1,19 +1,19 @@
 export interface User {
   id: string;
   email: string;
-  first_name: string;
-  last_name: string;
-  is_verified: boolean;
+  firstName: string;
+  lastName: string;
+  isVerified: boolean;
   role: string;
-  created_at: string;
-  updated_at: string;
-  mfa_enabled: boolean;
-  profile_image?: string;
+  createdAt: string;
+  updatedAt: string;
+  mfaEnabled: boolean;
+  profileImage?: string;
 }
 
 export interface Session {
-  access_token: string;
-  refresh_token?: string;
+  accessToken: string;
+  refreshToken?: string;
   user?: User;
 }
 
@@ -45,19 +45,19 @@ export interface ApiResponse<T = any> {
 
 export interface SessionInfo {
   id: string;
-  ip_address: string;
-  user_agent: string;
-  created_at: string;
-  expires_at: string;
-  is_current: boolean;
+  ipAddress: string;
+  userAgent: string;
+  createdAt: string;
+  expiresAt: string;
+  isCurrent: boolean;
 }
 
 export interface AuditLog {
   id: string;
   action: string;
-  ip_address: string;
-  user_agent: string;
-  created_at: string;
+  ipAddress: string;
+  userAgent: string;
+  createdAt: string;
 }
 
 export type AuthStateChangeCallback = (session: Session | null) => void;
