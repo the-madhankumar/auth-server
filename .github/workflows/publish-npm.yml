@@ -1,14 +1,16 @@
 name: Publish NPM Package
 
 on:
-  push:
-    tags:
-      - 'v*.*.*-npm'
+  workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+      id-token: write
+
     defaults:
       run:
         working-directory: clients/ts
@@ -29,6 +31,4 @@ jobs:
         run: npm run build
         
       - name: Publish to NPM
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance --access public

@@ -1,5 +1,5 @@
 {
-  "name": "@roshankumar0036singh/auth-server-client",
+  "name": "@authserver/client",
   "version": "1.0.0",
   "description": "Official TypeScript SDK for the Auth Server — auto token refresh, session persistence, React bindings",
   "main": "dist/index.js",

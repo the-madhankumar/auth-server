@@ -1,4 +1,4 @@
-# @roshankumar0036singh/auth-server-client
+# @authserver/client
 
 The official TypeScript/JavaScript SDK for the Auth Server. Production-ready with automatic token refresh, session persistence, SSR-safety, structured error handling, and first-class React bindings.
 
@@ -17,13 +17,13 @@ The official TypeScript/JavaScript SDK for the Auth Server. Production-ready wit
 ## Installation
 
 ```bash
-npm install @roshankumar0036singh/auth-server-client
+npm install @authserver/client
 ```
 
 ## Quick Start (Vanilla JS / TypeScript)
 
 ```typescript
-import { AuthClient, AuthError } from '@roshankumar0036singh/auth-server-client';
+import { AuthClient, AuthError } from '@authserver/client';
 
 const auth = new AuthClient({
   serverUrl: 'https://your-auth-server.com',
@@ -63,8 +63,8 @@ unsubscribe();
 ### 1. Wrap your app with `<AuthProvider>`
 
 ```tsx
-import { AuthClient } from '@roshankumar0036singh/auth-server-client';
-import { AuthProvider } from '@roshankumar0036singh/auth-server-client/react';
+import { AuthClient } from '@authserver/client';
+import { AuthProvider } from '@authserver/client/react';
 
 const authClient = new AuthClient({
   serverUrl: 'https://your-auth-server.com',
@@ -84,7 +84,7 @@ export default function App() {
 ### 2. Use the `useAuth()` hook
 
 ```tsx
-import { useAuth } from '@roshankumar0036singh/auth-server-client/react';
+import { useAuth } from '@authserver/client/react';
 
 function Dashboard() {
   const { user, isAuthenticated, isLoading, login, logout, client } = useAuth();
