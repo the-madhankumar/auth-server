@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,14 +9,18 @@ import (
 	"github.com/roshankumar0036singh/auth-server/internal/utils"
 )
 
-type AdminHandler struct {
-	authService *service.AuthService
+type AdminAuthService interface {
+	LockUser(userID, adminID, ipAddress, userAgent string) error
+	UnlockUser(userID, adminID, ipAddress, userAgent string) error
+	DeleteAccount(userID string) error
 }
 
-func NewAdminHandler(authService *service.AuthService) *AdminHandler {
-	return &AdminHandler{
-		authService: authService,
-	}
+type AdminHandler struct {
+	authService AdminAuthService
+}
+
+func NewAdminHandler(authService AdminAuthService) *AdminHandler {
+	return &AdminHandler{authService: authService}
 }
 
 // GetUsers lists all users (Note: Pagination should be added for production)
@@ -39,8 +44,30 @@ func (h *AdminHandler) GetUsers(c *gin.Context) {
 // @Success 200 {object} utils.Response
 // @Router /api/admin/users/{id}/lock [post]
 func (h *AdminHandler) LockUser(c *gin.Context) {
+	adminID := c.GetString("userID")
 	userID := c.Param("id")
-	// TODO: Implement LockUser in AuthService
+	ipAddress := c.ClientIP()
+	userAgent := c.GetHeader("User-Agent")
+	if err := h.authService.LockUser(userID, adminID, ipAddress, userAgent); err != nil {
+		switch {
+		case errors.Is(err, service.ErrUserNotFound):
+			c.JSON(http.StatusNotFound,
+				utils.ErrorResponse("User not found", err))
+		case errors.Is(err, service.ErrSelfLock):
+			c.JSON(http.StatusBadRequest,
+				utils.ErrorResponse("Cannot lock your own account", err))
+		case errors.Is(err, service.ErrAdminLock):
+			c.JSON(http.StatusForbidden,
+				utils.ErrorResponse("Admin accounts cannot be locked", err))
+		case errors.Is(err, service.ErrAlreadyLocked):
+			c.JSON(http.StatusConflict,
+				utils.ErrorResponse("Account is already locked", err))
+		default:
+			c.JSON(http.StatusInternalServerError,
+				utils.ErrorResponse("Failed to lock user", err))
+		}
+		return
+	}
 	c.JSON(http.StatusOK, utils.SuccessResponse("User locked successfully", map[string]string{"userID": userID}))
 }
 
@@ -52,8 +79,24 @@ func (h *AdminHandler) LockUser(c *gin.Context) {
 // @Success 200 {object} utils.Response
 // @Router /api/admin/users/{id}/unlock [post]
 func (h *AdminHandler) UnlockUser(c *gin.Context) {
+	adminID := c.GetString("userID")
 	userID := c.Param("id")
-	// TODO: Implement UnlockUser in AuthService
+	ipAddress := c.ClientIP()
+	userAgent := c.GetHeader("User-Agent")
+	if err := h.authService.UnlockUser(userID, adminID, ipAddress, userAgent); err != nil {
+		switch {
+		case errors.Is(err, service.ErrUserNotFound):
+			c.JSON(http.StatusNotFound,
+				utils.ErrorResponse("User not found", err))
+		case errors.Is(err, service.ErrNotLocked):
+			c.JSON(http.StatusBadRequest,
+				utils.ErrorResponse("Account is not locked", err))
+		default:
+			c.JSON(http.StatusInternalServerError,
+				utils.ErrorResponse("Failed to unlock user", err))
+		}
+		return
+	}
 	c.JSON(http.StatusOK, utils.SuccessResponse("User unlocked successfully", map[string]string{"userID": userID}))
 }
 

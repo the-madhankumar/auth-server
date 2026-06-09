@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"time"
 
 	"github.com/roshankumar0036singh/auth-server/internal/models"
 	"gorm.io/gorm"
@@ -75,4 +76,45 @@ func (r *UserRepository) EmailExists(email string) (bool, error) {
 	var count int64
 	err := r.db.Model(&models.User{}).Where("email = ?", email).Count(&count).Error
 	return count > 0, err
+}
+
+func (r *UserRepository) RunInTx(fn func(u *UserRepository, t *TokenRepository) error) error {
+    return r.db.Transaction(func(tx *gorm.DB) error {
+        return fn(NewUserRepository(tx), NewTokenRepository(tx))
+    })
+}
+
+func (r *UserRepository) LockUser(userID string, lockedUntil time.Time) error {
+	result := r.db.Model(&models.User{}).
+		Where("id = ?", userID).
+		Update("locked_until", lockedUntil)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return ErrUserNotFound
+	}
+
+	return nil
+}
+
+func (r *UserRepository) UnlockUser(userID string) error {
+	result := r.db.Model(&models.User{}).
+		Where("id = ?", userID).
+		Updates(map[string]interface{}{
+			"locked_until":          nil,
+			"failed_login_attempts": 0,
+		})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return ErrUserNotFound
+	}
+
+	return nil
 }

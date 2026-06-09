@@ -77,3 +77,8 @@ func (u *User) ToPublic() *PublicUser {
 		LastLoginAt:   u.LastLoginAt,
 	}
 }
+
+func (u *User) IsLocked() bool {
+	return u.LockedUntil != nil &&
+		time.Now().Before(*u.LockedUntil)
+}
