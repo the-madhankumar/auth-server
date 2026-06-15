@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "skills": {
+    "api-security-hardener": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "skillPath": "security/api-security-hardener/SKILL.md",
+      "computedHash": "c9a48e8831bfbae42aa06973588ad7781e8e59d9775854017606f3d0b459f4ba"
+    },
+    "auth-implementation-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-essentials/skills/auth-implementation-patterns/SKILL.md",
+      "computedHash": "43b53312c6bbc9ca6d4a7f1ae97804cb2520a9aec7d7903004eed3b622d7e0d9"
+    },
+    "caching-strategy-optimizer": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "skillPath": "ci-cd/caching-strategy-optimizer/SKILL.md",
+      "computedHash": "1413b57855ccbb4b625af38ed83ffc7b0306ba62d47aac166e20b1d86ead53b0"
+    },
+    "code-review-excellence": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-essentials/skills/code-review-excellence/SKILL.md",
+      "computedHash": "89b2a6a234f6368b12f0232e1d77bd5ed894115114edf67eb1f2976e153664c0"
+    },
+    "conventional-commit": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/conventional-commit/SKILL.md",
+      "computedHash": "f29c9486cede6c7b2df0cfb0a2e4aa67446552b991bcf17d1b309e903171f03d"
+    },
+    "error-handling-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-essentials/skills/error-handling-patterns/SKILL.md",
+      "computedHash": "61c0f8496afccbc0b9c46cf0878fac064892cb80981eb6b64ebc5892c71cfec7"
+    },
+    "github-actions-docs": {
+      "source": "xixu-me/skills",
+      "sourceType": "github",
+      "skillPath": "skills/github-actions-docs/SKILL.md",
+      "computedHash": "ead3fa2aff18e829c468dee593e1dc897aa95dc7a07d9ff8ff9f30c296b19af8"
+    },
+    "rate-limiting-abuse-protection": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "skillPath": "backend/rate-limiting-abuse-protection/SKILL.md",
+      "computedHash": "565eefd3a90e2aafe9a9b0196ce4831ac055f50c1477970f27697c81fc0414a6"
+    },
+    "rbac-permissions-builder": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "skillPath": "backend/rbac-permissions-builder/SKILL.md",
+      "computedHash": "2b6cd21df0aa9694d6ef392f9e3d4fbf1cd9424b422c3d460f28809a609f7ac1"
+    }
+  }
+}
