@@ -41,7 +41,7 @@ jobs:
           path-to-document: 'https://github.com/roshankumar0036singh/auth-server/blob/main/CLA.md'
           branch: 'cla-signatures'
           allowlist: 'roshankumar0036singh,bot*'
-          custom-pr-sign-comment: 'I have read the CLA and agree to its terms.*'
+          custom-pr-sign-comment: 'I have read the CLA and agree to its terms.'
           custom-notsigned-prcomment: |
             Thank you for your contribution! Before we can merge this PR, we need you to sign our [Contributor License Agreement](https://github.com/roshankumar0036singh/auth-server/blob/main/CLA.md).
             <br/>To sign, please post a comment on this PR with the following exact text:
