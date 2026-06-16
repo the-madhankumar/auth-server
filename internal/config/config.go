@@ -66,6 +66,15 @@ type SecurityConfig struct {
 	AccountLockMaxAttempts int
 	AccountLockDuration    int // in minutes
 	EncryptionKey          string
+
+    LoginRateLimitMax    int
+    LoginRateLimitWindow  int
+
+    RegisterRateLimitMax    int
+    RegisterRateLimitWindow  int
+
+    ForgotRateLimitMax    int
+    ForgotRateLimitWindow int
 }
 
 func LoadConfig() *Config {
@@ -83,6 +92,15 @@ func LoadConfig() *Config {
 	rateLimitMax, _ := strconv.Atoi(getEnv("RATE_LIMIT_MAX", "5"))
 	accountLockMax, _ := strconv.Atoi(getEnv("ACCOUNT_LOCK_MAX_ATTEMPTS", "5"))
 	accountLockDuration, _ := strconv.Atoi(getEnv("ACCOUNT_LOCK_DURATION", "30")) // Minutes
+
+	loginRateLimitMax, _ := strconv.Atoi(getEnv("LOGIN_RATE_LIMIT_MAX", "5"))
+	loginRateLimitWindow, _ := strconv.Atoi(getEnv("LOGIN_RATE_LIMIT_WINDOW", "900000"))
+
+	registerRateLimitMax, _ := strconv.Atoi(getEnv("REGISTER_RATE_LIMIT_MAX", "3"))
+	registerRateLimitWindow, _ := strconv.Atoi(getEnv("REGISTER_RATE_LIMIT_WINDOW", "3600000"))
+
+	forgotRateLimitMax, _ := strconv.Atoi(getEnv("FORGOT_RATE_LIMIT_MAX", "3"))
+	forgotRateLimitWindow, _ := strconv.Atoi(getEnv("FORGOT_RATE_LIMIT_WINDOW", "3600000"))
 
 	appURL := getEnv("APP_URL", "http://localhost:3000")
 
@@ -132,6 +150,15 @@ func LoadConfig() *Config {
 			AccountLockMaxAttempts: accountLockMax,
 			AccountLockDuration:    accountLockDuration,
 			EncryptionKey:          encKey,
+
+			LoginRateLimitMax: loginRateLimitMax,
+			LoginRateLimitWindow: loginRateLimitWindow,
+
+			RegisterRateLimitMax: registerRateLimitMax,
+			RegisterRateLimitWindow: registerRateLimitWindow,
+
+			ForgotRateLimitMax: forgotRateLimitMax,
+			ForgotRateLimitWindow: forgotRateLimitWindow,
 		},
 	}
 }
