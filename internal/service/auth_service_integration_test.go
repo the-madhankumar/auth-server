@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pquerna/otp/totp"
 	"github.com/roshankumar0036singh/auth-server/internal/dto"
 	"github.com/roshankumar0036singh/auth-server/internal/models"
 	"github.com/roshankumar0036singh/auth-server/internal/repository"
@@ -63,6 +64,65 @@ func TestAuthService_Login_Integration(t *testing.T) {
 	}
 	_, err = service.Login(loginReqFail, "127.0.0.1", "UserAgent")
 	assert.Error(t, err)
+}
+
+func TestAuthService_DisableMFA_Integration(t *testing.T) {
+	authService, db, mr := testutils.SetupIntegrationTest(t)
+	defer mr.Close()
+
+	const password = "Password123!"
+
+	regReq := &dto.RegisterRequest{
+		Email:     "mfauser@example.com",
+		Password:  password,
+		FirstName: "MFA",
+		LastName:  "User",
+	}
+	user, err := authService.Register(regReq)
+	require.NoError(t, err)
+
+	// MFA not enabled yet
+	err = authService.DisableMFA(user.ID, password, "123456")
+	assert.ErrorIs(t, err, service.ErrMFANotEnabled)
+
+	// Enable MFA via the real EnableMFA -> VerifyEnableMFA flow
+	enableResp, err := authService.EnableMFA(user.ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, enableResp.Secret)
+
+	verifyCode, err := totp.GenerateCode(enableResp.Secret, time.Now())
+	require.NoError(t, err)
+	require.NoError(t, authService.VerifyEnableMFA(user.ID, verifyCode))
+
+	// Wrong password is rejected before the TOTP code is even checked
+	err = authService.DisableMFA(user.ID, "WrongPassword!", verifyCode)
+	assert.ErrorIs(t, err, service.ErrIncorrectPassword)
+
+	// Invalid TOTP code
+	err = authService.DisableMFA(user.ID, password, "000000")
+	assert.ErrorIs(t, err, service.ErrInvalidMFACode)
+
+	// Correct password + valid TOTP code disables MFA
+	disableCode, err := totp.GenerateCode(enableResp.Secret, time.Now())
+	require.NoError(t, err)
+
+	err = authService.DisableMFA(user.ID, password, disableCode)
+	assert.NoError(t, err)
+
+	var updated models.User
+	require.NoError(t, db.First(&updated, "id = ?", user.ID).Error)
+	assert.False(t, updated.MFAEnabled)
+	assert.Empty(t, updated.MFASecret)
+
+	// An MFA_DISABLED audit log entry was recorded
+	var auditLog models.AuditLog
+	require.NoError(t, db.Where("user_id = ? AND action = ?", user.ID, "MFA_DISABLED").First(&auditLog).Error)
+	assert.Equal(t, "USER", auditLog.Entity)
+	assert.Equal(t, user.ID, auditLog.EntityID)
+
+	// Disabling again fails since MFA is no longer enabled
+	err = authService.DisableMFA(user.ID, password, disableCode)
+	assert.ErrorIs(t, err, service.ErrMFANotEnabled)
 }
 
 type fakeUserRepo struct {

@@ -133,6 +133,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 				// MFA Routes (Protected)
 				protected.POST("/mfa/enable", authHandler.EnableMFA)
 				protected.POST("/mfa/verify", authHandler.VerifyMFA)
+				protected.POST("/mfa/disable", authHandler.DisableMFA)
 
 				// OAuth Client Management (Protected)
 				oauthClients := protected.Group("/oauth/clients")

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -12,9 +13,10 @@ import (
 )
 
 const (
-	userAgentHeader = "User-Agent"
-	msgLoginSuccess = "Login successful"
-	msgLoginFailed  = "Login failed"
+	userAgentHeader     = "User-Agent"
+	msgLoginSuccess     = "Login successful"
+	msgLoginFailed      = "Login failed"
+	msgMFADisableFailed = "Failed to disable MFA"
 )
 
 type AuthHandler struct {
@@ -738,6 +740,55 @@ func (h *AuthHandler) VerifyMFA(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, utils.SuccessResponse("MFA enabled successfully", nil))
+}
+
+// DisableMFA re-authenticates the user via password and TOTP code, then disables MFA
+// @Summary Disable MFA
+// @Tags auth
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body dto.MFADisableRequest true "Current password and TOTP verification code"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Failure 500 {object} utils.Response
+// @Router /api/auth/mfa/disable [post]
+func (h *AuthHandler) DisableMFA(c *gin.Context) {
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse("Unauthorized"))
+		return
+	}
+
+	userID, ok := userIDVal.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse("Unauthorized"))
+		return
+	}
+
+	var req dto.MFADisableRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, utils.ValidationErrorResponse(err.Error()))
+		return
+	}
+
+	if err := h.authService.DisableMFA(userID, req.Password, req.Code); err != nil {
+		switch {
+		case errors.Is(err, service.ErrUserNotFound):
+			c.JSON(http.StatusNotFound, utils.ErrorResponse("User not found", err))
+		case errors.Is(err, service.ErrMFANotEnabled):
+			c.JSON(http.StatusConflict, utils.ErrorResponse(msgMFADisableFailed, err))
+		case errors.Is(err, service.ErrIncorrectPassword), errors.Is(err, service.ErrInvalidMFACode):
+			c.JSON(http.StatusUnauthorized, utils.ErrorResponse(msgMFADisableFailed, err))
+		default:
+			utils.InternalServerErrorResponse(c, msgMFADisableFailed)
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.SuccessResponse("MFA disabled successfully", nil))
 }
 
 // LoginMFA handles login with MFA code

@@ -20,6 +20,10 @@ var (
 	ErrAdminLock     = errors.New("admin accounts cannot be locked")
 	ErrAlreadyLocked = errors.New("account is already locked")
 	ErrNotLocked     = errors.New("account is not locked")
+
+	ErrMFANotEnabled     = errors.New("MFA is not enabled for this account")
+	ErrInvalidMFACode    = errors.New(errInvalidTOTPCode)
+	ErrIncorrectPassword = errors.New("incorrect password")
 )
 
 const (
@@ -27,6 +31,7 @@ const (
 	errGenRefreshToken   = "failed to generate refresh token"
 	errStoreRefreshToken = "failed to store refresh token"
 	errHashPassword      = "failed to hash password"
+	errInvalidTOTPCode   = "invalid TOTP code"
 )
 
 const errUserNotFound = "user not found"
@@ -320,7 +325,7 @@ func (s *AuthService) VerifyEnableMFA(userID, code string) error {
 	}
 
 	if !s.mfaService.ValidateMFA(user.MFASecret, code) {
-		return errors.New("invalid TOTP code")
+		return errors.New(errInvalidTOTPCode)
 	}
 
 	// Enable MFA
@@ -331,6 +336,43 @@ func (s *AuthService) VerifyEnableMFA(userID, code string) error {
 	}
 
 	s.auditService.LogEvent(&userID, "MFA_ENABLED", "USER", userID, "", "", nil)
+	return nil
+}
+
+// DisableMFA re-authenticates the user via password and TOTP code, then disables MFA on their account
+func (s *AuthService) DisableMFA(userID, password, code string) error {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		if errors.Is(err, repository.ErrUserNotFound) {
+			return ErrUserNotFound
+		}
+		return err
+	}
+
+	if !user.MFAEnabled {
+		return ErrMFANotEnabled
+	}
+
+	// Disabling MFA is security-sensitive: require a fresh password check
+	// in addition to the TOTP code.
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+		return ErrIncorrectPassword
+	}
+
+	if !s.mfaService.ValidateMFA(user.MFASecret, code) {
+		return ErrInvalidMFACode
+	}
+
+	if err := s.userRepo.Update(userID, map[string]interface{}{
+		"mfa_enabled": false,
+		"mfa_secret":  "",
+	}); err != nil {
+		return fmt.Errorf("failed to disable MFA: %w", err)
+	}
+
+	if err := s.auditService.LogEvent(&userID, "MFA_DISABLED", "USER", userID, "", "", nil); err != nil {
+		return fmt.Errorf("failed to write MFA_DISABLED audit log for user %s: %w", userID, err)
+	}
 	return nil
 }
 
@@ -346,8 +388,10 @@ func (s *AuthService) VerifyLoginMFA(email, code, ipAddress, userAgent string) (
 	}
 
 	if !s.mfaService.ValidateMFA(user.MFASecret, code) {
-		s.auditService.LogEvent(&user.ID, "MFA_LOGIN_FAILED", "USER", user.ID, ipAddress, userAgent, nil)
-		return nil, errors.New("invalid TOTP code")
+		if err := s.auditService.LogEvent(&user.ID, "MFA_LOGIN_FAILED", "USER", user.ID, ipAddress, userAgent, nil); err != nil {
+			log.Printf("failed to write MFA_LOGIN_FAILED audit log for user %s: %v", user.ID, err)
+		}
+		return nil, errors.New(errInvalidTOTPCode)
 	}
 
 	response, err := s.createLoginResponse(user, ipAddress, userAgent)
