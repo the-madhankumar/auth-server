@@ -3,14 +3,14 @@ package middleware
 import (
 	"fmt"
 	"net/http"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/roshankumar0036singh/auth-server/internal/config"
+	"github.com/roshankumar0036singh/auth-server/internal/dto"
 	"github.com/roshankumar0036singh/auth-server/internal/service"
 	"github.com/roshankumar0036singh/auth-server/internal/utils"
-	"github.com/roshankumar0036singh/auth-server/internal/dto"
 )
 
 func getLimits(cfg *config.Config, path string) (int, time.Duration) {
@@ -43,28 +43,28 @@ func getRateLimitKey(c *gin.Context) (string, bool) {
 	cleanPath := strings.ReplaceAll(strings.Trim(path, "/"), "/", ":")
 
 	switch path {
-		case "/api/auth/forgot-password":
-			var req dto.ForgotPasswordRequest
+	case "/api/auth/forgot-password":
+		var req dto.ForgotPasswordRequest
 
-			if err := c.ShouldBindBodyWithJSON(&req); err != nil {
-				c.Abort()
-				return "", false
-			}
+		if err := c.ShouldBindBodyWithJSON(&req); err != nil {
+			c.Abort()
+			return "", false
+		}
 
-			cleanEmail := strings.ToLower(strings.TrimSpace(req.Email))
-			if cleanEmail == "" {
-				return "", false
-			}
-			return fmt.Sprintf("ratelimit:forgot:%s:%s", ip, cleanEmail), true
-		
-		case "/api/auth/login":
-			return fmt.Sprintf("ratelimit:login:%s", ip), true
-		
-		case "/api/auth/google/login", "/api/auth/github/login":
-			return fmt.Sprintf("ratelimit:oauth:%s", ip), true
+		cleanEmail := strings.ToLower(strings.TrimSpace(req.Email))
+		if cleanEmail == "" {
+			return "", false
+		}
+		return fmt.Sprintf("ratelimit:forgot:%s:%s", ip, cleanEmail), true
 
-		default:
-			return fmt.Sprintf("ratelimit:%s:%s", strings.Trim(cleanPath, "/"), ip), true
+	case "/api/auth/login":
+		return fmt.Sprintf("ratelimit:login:%s", ip), true
+
+	case "/api/auth/google/login", "/api/auth/github/login":
+		return fmt.Sprintf("ratelimit:oauth:%s", ip), true
+
+	default:
+		return fmt.Sprintf("ratelimit:%s:%s", strings.Trim(cleanPath, "/"), ip), true
 	}
 }
 

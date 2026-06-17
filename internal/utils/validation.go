@@ -2,8 +2,8 @@ package utils
 
 import (
 	"errors"
-	"unicode"
 	"net/mail"
+	"unicode"
 )
 
 // ValidatePassword checks if the password meets complexity requirements

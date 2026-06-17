@@ -463,7 +463,7 @@ func (h *AuthHandler) GetSessions(c *gin.Context) {
 			UserAgent: session.UserAgent,
 			CreatedAt: session.CreatedAt.Format("2006-01-02 15:04:05"),
 			ExpiresAt: session.ExpiresAt.Format("2006-01-02 15:04:05"),
-			IsCurrent: session.ID == currentID, 
+			IsCurrent: session.ID == currentID,
 		}
 	}
 

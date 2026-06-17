@@ -35,7 +35,6 @@ type RedisConfig struct {
 	TTL int
 }
 
-
 type JWTConfig struct {
 	AccessSecret  string
 	RefreshSecret string
@@ -67,14 +66,14 @@ type SecurityConfig struct {
 	AccountLockDuration    int // in minutes
 	EncryptionKey          string
 
-    LoginRateLimitMax    int
-    LoginRateLimitWindow  int
+	LoginRateLimitMax    int
+	LoginRateLimitWindow int
 
-    RegisterRateLimitMax    int
-    RegisterRateLimitWindow  int
+	RegisterRateLimitMax    int
+	RegisterRateLimitWindow int
 
-    ForgotRateLimitMax    int
-    ForgotRateLimitWindow int
+	ForgotRateLimitMax    int
+	ForgotRateLimitWindow int
 }
 
 func mustAtoi(key string, defaultValue int) int {
@@ -133,10 +132,10 @@ func LoadConfig() *Config {
 			TTL: redisTTL,
 		},
 		JWT: JWTConfig{
-    		AccessSecret:  getEnv("JWT_SECRET", ""),
-    		RefreshSecret: getEnv("JWT_REFRESH_SECRET", ""),
-    		AccessExpiry:  getEnv("JWT_ACCESS_EXPIRY", "15m"),
-    		RefreshExpiry: getEnv("JWT_REFRESH_EXPIRY", "168h"),
+			AccessSecret:  getEnv("JWT_SECRET", ""),
+			RefreshSecret: getEnv("JWT_REFRESH_SECRET", ""),
+			AccessExpiry:  getEnv("JWT_ACCESS_EXPIRY", "15m"),
+			RefreshExpiry: getEnv("JWT_REFRESH_EXPIRY", "168h"),
 		},
 		OAuth: OAuthConfig{
 			Google: GoogleOAuthConfig{
@@ -159,13 +158,13 @@ func LoadConfig() *Config {
 			AccountLockDuration:    accountLockDuration,
 			EncryptionKey:          encKey,
 
-			LoginRateLimitMax: loginRateLimitMax,
+			LoginRateLimitMax:    loginRateLimitMax,
 			LoginRateLimitWindow: loginRateLimitWindow,
 
-			RegisterRateLimitMax: registerRateLimitMax,
+			RegisterRateLimitMax:    registerRateLimitMax,
 			RegisterRateLimitWindow: registerRateLimitWindow,
 
-			ForgotRateLimitMax: forgotRateLimitMax,
+			ForgotRateLimitMax:    forgotRateLimitMax,
 			ForgotRateLimitWindow: forgotRateLimitWindow,
 		},
 	}
