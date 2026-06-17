@@ -19,6 +19,8 @@ services:
       - redis
     networks:
       - auth-network
+    env_file:
+      - .env      
 
   postgres:
     image: postgres:15-alpine
