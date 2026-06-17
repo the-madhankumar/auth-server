@@ -37,7 +37,7 @@ func (m *MockEmailSender) SendPasswordResetEmail(email, token, appURL string) er
 
 func SetupIntegrationTest(t *testing.T) (*service.AuthService, *gorm.DB, *miniredis.Miniredis) {
 	// 1. In-memory SQLite
-	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("file::memory:?mode=memory&cache=private"), &gorm.Config{})
 	assert.NoError(t, err)
 
 	// Migrate
@@ -49,10 +49,51 @@ func SetupIntegrationTest(t *testing.T) (*service.AuthService, *gorm.DB, *minire
 		&models.AuditLog{},
 		&models.OAuthAccessToken{},
 	)
-	assert.NoError(t, err)
-	assert.NoError(t, db.Exec("DELETE FROM oauth_access_tokens").Error)
+        assert.NoError(t, err)
+        assert.NoError(t, db.Exec("DELETE FROM oauth_access_tokens").Error)
+        
+        // OAuth tables — using raw SQL to avoid Postgres-specific gen_random_uuid()
+        err = db.Exec(`CREATE TABLE IF NOT EXISTS oauth_clients (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            client_id TEXT UNIQUE NOT NULL,
+            client_secret TEXT NOT NULL,
+            redirect_uris TEXT,
+            scopes TEXT,
+            owner_id TEXT,
+            is_active INTEGER DEFAULT 1,
+            is_public INTEGER DEFAULT 0,
+            created_at DATETIME,
+            updated_at DATETIME
+        )`).Error
+        assert.NoError(t, err)
 
-	// 2. Miniredis
+        err = db.Exec(`CREATE TABLE IF NOT EXISTS authorization_codes (
+            id TEXT PRIMARY KEY,
+            code TEXT UNIQUE NOT NULL,
+            client_id TEXT NOT NULL,
+            user_id TEXT NOT NULL,
+            redirect_uri TEXT NOT NULL,
+            scopes TEXT,
+            expires_at DATETIME NOT NULL,
+            used INTEGER DEFAULT 0,
+            created_at DATETIME,
+            code_challenge TEXT,
+            code_challenge_method TEXT
+        )`).Error
+        assert.NoError(t, err)
+
+        err = db.Exec(`CREATE TABLE IF NOT EXISTS user_consents (
+            id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            client_id TEXT NOT NULL,
+            scopes TEXT,
+            created_at DATETIME,
+            updated_at DATETIME
+        )`).Error
+        assert.NoError(t, err)
+
+        // 2. Miniredis
 	mr, err := miniredis.Run()
 	assert.NoError(t, err)
 

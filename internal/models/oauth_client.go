@@ -18,7 +18,8 @@ type OAuthClient struct {
 	Scopes       pq.StringArray `gorm:"type:text[]" json:"scopes"`
 	OwnerID      string         `gorm:"type:uuid" json:"owner_id"`
 	IsActive     bool           `gorm:"default:true" json:"is_active"`
-	CreatedAt    time.Time      `json:"created_at"`
+	IsPublic     bool           `gorm:"default:false" json:"is_public"`
+        CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
 }
 

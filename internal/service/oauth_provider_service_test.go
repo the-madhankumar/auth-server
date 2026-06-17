@@ -56,7 +56,7 @@ func TestOAuthProviderService(t *testing.T) {
 	ownerID := "user1"
 	otherOwnerID := "user2"
 
-	client, _, err := providerService.CreateClient("test-client", []string{"http://localhost"}, []string{"read:profile"}, ownerID)
+	client, _, err := providerService.CreateClient("test-client", []string{"http://localhost"}, []string{"read:profile"}, ownerID, false)
 	assert.NoError(t, err)
 
 	t.Run("CreateOrUpdateProviderConfig - Success", func(t *testing.T) {

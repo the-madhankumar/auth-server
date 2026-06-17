@@ -49,11 +49,12 @@ func (h *OAuthClientHandler) CreateOAuthClient(c *gin.Context) {
 
 	// Create the OAuth client
 	client, clientSecret, err := h.oauthProviderService.CreateClient(
-		req.Name,
-		req.RedirectURIs,
-		req.Scopes,
-		userID.(string),
-	)
+                req.Name,
+                req.RedirectURIs,
+                req.Scopes,
+                userID.(string),
+                req.IsPublic,
+        )
 	if err != nil {
 		utils.BadRequestResponse(c, err.Error())
 		return
@@ -136,6 +137,7 @@ type CreateOAuthClientRequest struct {
 	Name         string   `json:"name" binding:"required"`
 	RedirectURIs []string `json:"redirect_uris" binding:"required,min=1"`
 	Scopes       []string `json:"scopes" binding:"required,min=1"`
+	IsPublic     bool     `json:"is_public"`
 }
 
 type CreateOAuthClientResponse struct {
@@ -158,3 +160,4 @@ type ListOAuthClientsResponse struct {
 	Success bool                 `json:"success"`
 	Data    []models.OAuthClient `json:"data"`
 }
+
