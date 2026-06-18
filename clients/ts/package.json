@@ -1,6 +1,6 @@
 {
   "name": "@authserver/client",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Official TypeScript SDK for the Auth Server — auto token refresh, session persistence, React bindings",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

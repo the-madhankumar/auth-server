@@ -1,5 +1,5 @@
 {
-  "name": "create-auth-app",
+  "name": "@authserver/create-auth-app",
   "version": "0.1.0",
   "description": "Scaffold a new app wired up with @authserver/client — Next.js, React, or Node.js.",
   "type": "module",
