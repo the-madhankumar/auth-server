@@ -6,7 +6,7 @@
 
 <br/>
 
-<img src="./docs/assets/banner.png" alt="Auth Server — Production-Ready Authentication Microservice in Go" width="1000"/>
+<img src="./docs/assets/banner.png" alt="Auth Server — Production-Ready Authentication Microservice in Go" width="800"/>
 
 <br/><br/>
 
@@ -102,24 +102,22 @@ Building authentication from scratch is tedious, error-prone, and takes weeks aw
 <tr>
 <td>
 
-&bull; JWT access & refresh token rotation with family tracking<br/>
+&bull; JWT access & refresh token rotation<br/>
 &bull; Email/password registration & login<br/>
-&bull; Email verification & password reset flows<br/>
-&bull; Social login — **Google** & **GitHub** (configurable per-client)<br/>
-&bull; Multi-Factor Auth (**TOTP** — Google Authenticator / Authy)<br/>
-&bull; Session management, device tracking & multi-device logout<br/>
-&bull; Automatic token blacklisting on logout
+&bull; Email verification & password reset<br/>
+&bull; Social login — Google & GitHub<br/>
+&bull; Multi-Factor Auth (TOTP)<br/>
+&bull; Session management & multi-device logout
 
 </td>
 <td>
 
-&bull; BCrypt password hashing (configurable rounds)<br/>
-&bull; Redis-backed rate limiting per endpoint (login, register, forgot-pw)<br/>
-&bull; Token blacklist & secure revocation via Redis TTL<br/>
-&bull; CSP, CORS, & security headers middleware<br/>
-&bull; Account lockout after configurable failed attempts<br/>
-&bull; Comprehensive audit trail logging with timestamps<br/>
-&bull; Encrypted sensitive data at rest (32-byte AES key)
+&bull; BCrypt password hashing<br/>
+&bull; Redis-backed rate limiting<br/>
+&bull; Token blacklist & revocation<br/>
+&bull; CSP, CORS & security headers<br/>
+&bull; Account lockout on failed attempts<br/>
+&bull; Audit trail logging
 
 </td>
 </tr>
@@ -130,24 +128,22 @@ Building authentication from scratch is tedious, error-prone, and takes weeks aw
 <tr>
 <td>
 
-&bull; Full Authorization Code flow (+ PKCE-ready)<br/>
-&bull; Client registration & credential management API<br/>
-&bull; User consent screen with scope display<br/>
-&bull; Per-client social provider configuration (Google, GitHub)<br/>
-&bull; Token introspection & `/userinfo` endpoint<br/>
-&bull; Client secret rotation & deletion<br/>
-&bull; Refresh token grant for OAuth clients *(soon)*
+&bull; Authorization Code flow (PKCE-ready)<br/>
+&bull; Client registration & management<br/>
+&bull; User consent screen<br/>
+&bull; Per-client provider configuration<br/>
+&bull; Token exchange & /userinfo endpoint<br/>
+&bull; Client secret rotation & deletion
 
 </td>
 <td>
 
-&bull; **TypeScript SDK** — [`@authserver/client`](https://www.npmjs.com/package/@authserver/client)<br/>
-&bull; React bindings — `AuthProvider` + `useAuth()` + `useUser()`<br/>
-&bull; Next.js adapter — cookie-based SSR auth with `withAuth()`<br/>
-&bull; Admin SDK — `AdminClient` for user management<br/>
-&bull; Proactive token refresh & event emitter (`on('login')`, etc.)<br/>
-&bull; Interactive Swagger docs with custom UI<br/>
-&bull; Docker Compose — PostgreSQL + Redis in one command
+&bull; TypeScript SDK on npm<br/>
+&bull; React hooks — AuthProvider + useAuth<br/>
+&bull; Next.js SSR adapter<br/>
+&bull; Admin SDK for user management<br/>
+&bull; Interactive Swagger docs<br/>
+&bull; Docker Compose one-command setup
 
 </td>
 </tr>
