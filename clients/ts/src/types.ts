@@ -35,6 +35,14 @@ export interface AuthClientConfig {
   storage?: 'localStorage' | 'sessionStorage' | 'memory';
   /** Custom storage key. Defaults to `auth_session_<clientId>` */
   storageKey?: string;
+  /** Max retries for failed network requests (excluding 4xx errors). Default 0. */
+  retries?: number;
+  /** Initial delay in ms before first retry. Doubles on each subsequent retry. Default 1000. */
+  retryDelay?: number;
+  /** Whether to periodically ping the server's /health endpoint to prevent it from spinning down. Default false. */
+  keepAlive?: boolean;
+  /** Interval in ms for the keepAlive ping. Default 5 minutes (300000ms). */
+  keepAliveInterval?: number;
 }
 
 export interface ApiResponse<T = any> {
@@ -62,6 +70,19 @@ export interface AuditLog {
   ipAddress: string;
   userAgent: string;
   createdAt: string;
+}
+
+export interface AuthEvents {
+  /** Legacy event, fired whenever the session changes (null if logged out) */
+  session: (session: Session | null) => void;
+  /** Fired specifically when a user successfully logs in */
+  login: (session: Session) => void;
+  /** Fired specifically when a user successfully logs out */
+  logout: () => void;
+  /** Fired when the access token is successfully refreshed */
+  'token:refreshed': (session: Session) => void;
+  /** Fired when any API request throws an AuthError */
+  error: (error: Error) => void;
 }
 
 export type AuthStateChangeCallback = (session: Session | null) => void;

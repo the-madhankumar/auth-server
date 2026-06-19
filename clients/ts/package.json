@@ -27,13 +27,18 @@
       "types": "./dist/nextjs/index.d.ts",
       "import": "./dist/nextjs/index.mjs",
       "require": "./dist/nextjs/index.js"
+    },
+    "./admin": {
+      "types": "./dist/AdminClient.d.ts",
+      "import": "./dist/AdminClient.mjs",
+      "require": "./dist/AdminClient.js"
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts src/react/index.tsx src/nextjs/index.ts --format cjs,esm --dts --clean",
-    "dev": "tsup src/index.ts src/react/index.tsx src/nextjs/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts src/react/index.tsx src/nextjs/index.ts src/AdminClient.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts src/react/index.tsx src/nextjs/index.ts src/AdminClient.ts --format cjs,esm --dts --watch",
     "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run --environment jsdom"
   },
   "keywords": [
     "auth",
@@ -78,8 +83,11 @@
   "devDependencies": {
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
+    "@vitest/browser": "^4.1.9",
+    "jsdom": "^29.1.1",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^4.1.9"
   },
   "peerDependencies": {
     "next": ">=13.0.0",

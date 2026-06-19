@@ -119,3 +119,39 @@ export function useAuth(): AuthContextValue {
   }
   return context;
 }
+
+/**
+ * Convenience hook to access just the current user profile.
+ * Re-renders only when the user profile changes.
+ */
+export function useUser(): User | null {
+  return useAuth().user;
+}
+
+/**
+ * Convenience hook to access session state.
+ */
+export function useSession() {
+  const { session, isAuthenticated, isLoading } = useAuth();
+  return { session, isAuthenticated, isLoading };
+}
+
+interface ProtectedRouteProps {
+  readonly children: React.ReactNode;
+  readonly fallback: React.ReactNode;
+}
+
+/**
+ * A wrapper component that requires the user to be authenticated.
+ * If the user is authenticated, it renders `children`.
+ * If the user is not authenticated, it renders `fallback` (e.g. a login page or redirect).
+ * While loading, it returns `null`.
+ */
+export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) return null;
+  if (!isAuthenticated) return <>{fallback}</>;
+
+  return <>{children}</>;
+}
