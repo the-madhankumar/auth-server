@@ -122,8 +122,8 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 	})
 
 	// OAuth 2.0 Provider endpoints
-	router.GET("/oauth/authorize", middleware.OptionalAuthMiddleware(tokenService), oauthHandler.Authorize)
-	router.POST("/oauth/authorize", middleware.AuthMiddleware(tokenService), oauthHandler.AuthorizePost)
+	router.GET("/oauth/authorize", middleware.OptionalAuthMiddleware(tokenService, cacheService), oauthHandler.Authorize)
+	router.POST("/oauth/authorize", middleware.AuthMiddleware(tokenService, cacheService), oauthHandler.AuthorizePost)
 	router.POST("/oauth/token", oauthHandler.Token)
 	router.GET("/oauth/userinfo", oauthHandler.UserInfo)
 
@@ -152,7 +152,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 
 			// Protected routes
 			protected := auth.Group("")
-			protected.Use(middleware.AuthMiddleware(tokenService))
+			protected.Use(middleware.AuthMiddleware(tokenService, cacheService))
 			{
 				protected.GET("/me", authHandler.GetMe)
 				protected.PUT("/profile", authHandler.UpdateProfile)
@@ -187,7 +187,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 
 		// Admin routes
 		admin := api.Group("/admin")
-		admin.Use(middleware.AuthMiddleware(tokenService))
+		admin.Use(middleware.AuthMiddleware(tokenService, cacheService))
 		admin.Use(middleware.RequireRole("admin"))
 		{
 			admin.GET("/users", adminHandler.GetUsers)

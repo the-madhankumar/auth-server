@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/roshankumar0036singh/auth-server/internal/config"
 	"github.com/roshankumar0036singh/auth-server/internal/dto"
 	"github.com/roshankumar0036singh/auth-server/internal/handler"
@@ -25,9 +26,13 @@ func TestAuthHandler_GetMe(t *testing.T) {
 	cfg := &config.Config{JWT: config.JWTConfig{AccessSecret: "secret"}}
 	tokenService := service.NewTokenService(cfg)
 
+	rdb := redis.NewClient(&redis.Options{Addr: mr.Addr()})
+	t.Cleanup(func() { _ = rdb.Close() })
+	cacheService := service.NewCacheService(rdb)
+
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.Use(middleware.AuthMiddleware(tokenService))
+	r.Use(middleware.AuthMiddleware(tokenService, cacheService))
 	r.GET("/api/auth/me", authHandler.GetMe)
 
 	// Register user manually via service to get ID

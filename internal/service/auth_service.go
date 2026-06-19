@@ -835,8 +835,16 @@ func (s *AuthService) Logout(accessToken, refreshToken string) error {
 
 	// Blacklist access token (expires in 15 minutes)
 	if accessToken != "" {
-		if err := s.cacheService.BlacklistToken(ctx, accessToken, 15*time.Minute); err != nil {
-			log.Printf("Warning: Failed to blacklist access token: %v", err)
+		claims, err := s.tokenService.ValidateAccessToken(accessToken)
+		if err == nil {
+			ttl := time.Until(claims.ExpiresAt.Time)
+			if ttl > 0 {
+				if err := s.cacheService.BlacklistToken(ctx, claims.ID, ttl); err != nil {
+					log.Printf("Warning: Failed to blacklist access token: %v", err)
+				}
+			}
+		} else {
+			log.Printf("Warning: Failed to validate access token during logout: %v", err)
 		}
 	}
 
@@ -856,8 +864,16 @@ func (s *AuthService) LogoutAll(userID string, currentAccessToken string) error 
 
 	// Blacklist current access token
 	if currentAccessToken != "" {
-		if err := s.cacheService.BlacklistToken(ctx, currentAccessToken, 15*time.Minute); err != nil {
-			log.Printf("Warning: Failed to blacklist access token: %v", err)
+		claims, err := s.tokenService.ValidateAccessToken(currentAccessToken)
+		if err == nil {
+			ttl := time.Until(claims.ExpiresAt.Time)
+			if ttl > 0 {
+				if err := s.cacheService.BlacklistToken(ctx, claims.ID, ttl); err != nil {
+					log.Printf("Warning: Failed to blacklist access token: %v", err)
+				}
+			}
+		} else {
+			log.Printf("Warning: Failed to validate access token during logout all: %v", err)
 		}
 	}
 
