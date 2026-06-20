@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/roshankumar0036singh/auth-server/internal/handler"
 	"github.com/roshankumar0036singh/auth-server/internal/service"
+	"github.com/roshankumar0036singh/auth-server/internal/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,6 +18,8 @@ type mockAdminSvc struct {
 	lockErr   error
 	unlockErr error
 	deleteErr error
+	users      models.PaginatedUsers
+    getUsersErr error
 }
 
 func (m *mockAdminSvc) LockUser(userID, adminID, ipAddress, userAgent string) error {
@@ -29,6 +32,10 @@ func (m *mockAdminSvc) UnlockUser(userID, adminID, ipAddress, userAgent string) 
 
 func (m *mockAdminSvc) DeleteAccount(userID string) error {
 	return m.deleteErr
+}
+
+func (m *mockAdminSvc) GetUsers(limit int, offset int) (models.PaginatedUsers, error) {
+    return m.users, m.getUsersErr
 }
 
 const (
