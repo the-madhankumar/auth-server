@@ -7,6 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type PaginatedUsers struct {
+	Total int64  `json:"total"`
+	Users []User `json:"users"`
+}
+
 type User struct {
 	ID                  string         `gorm:"type:uuid;primary_key" json:"id"`
 	Email               string         `gorm:"uniqueIndex;not null;size:255" json:"email"`

@@ -803,10 +803,10 @@ func (s *AuthService) GetUserByID(userID string) (*models.User, error) {
 }
 
 // GetUsers get all users by limit and offset [Pagination]
-func (s *AuthService) GetUsers(limit int, offset int) ([]models.User, error) {
+func (s *AuthService) GetUsers(limit int, offset int) (models.PaginatedUsers, error) {
 	users, err := s.userRepo.GetUsers(limit, offset)
 	if err != nil {
-		return nil, err
+		return models.PaginatedUsers{}, err
 	}
 	return users, nil
 }
