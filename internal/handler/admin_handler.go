@@ -42,10 +42,6 @@ func (h *AdminHandler) GetUsers(c *gin.Context) {
 		page = 1
 	}
 
-	if page > (math.MaxInt/limit)+1 {
-		page = (math.MaxInt / limit) + 1
-	}
-
 	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	if err != nil || limit < 1 {
 		limit = 10
@@ -53,6 +49,10 @@ func (h *AdminHandler) GetUsers(c *gin.Context) {
 
 	if limit > 100 {
 		limit = 100
+	}
+
+	if page > (math.MaxInt/limit)+1 {
+		page = (math.MaxInt / limit) + 1
 	}
 
 	offset := (page - 1) * limit
