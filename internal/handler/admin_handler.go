@@ -36,8 +36,19 @@ func NewAdminHandler(authService AdminAuthService) *AdminHandler {
 // @Success 200 {object} utils.Response
 // @Router /api/admin/users [get]
 func (h *AdminHandler) GetUsers(c *gin.Context) {
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+
+	if limit > 100 {
+		limit = 100
+	}
 
 	offset := (page - 1) * limit
 
