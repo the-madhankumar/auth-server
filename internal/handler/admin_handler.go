@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"math"
 
 	"github.com/gin-gonic/gin"
 	"github.com/roshankumar0036singh/auth-server/internal/service"
@@ -39,6 +40,10 @@ func (h *AdminHandler) GetUsers(c *gin.Context) {
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil || page < 1 {
 		page = 1
+	}
+
+	if page > (math.MaxInt/limit)+1 {
+		page = (math.MaxInt / limit) + 1
 	}
 
 	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))

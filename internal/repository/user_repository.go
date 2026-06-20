@@ -30,6 +30,7 @@ func (r *UserRepository) GetUsers(limit int, offset int) (models.PaginatedUsers,
 	}
 
 	if err := query.
+		Order("createdAt DESC").
 		Limit(limit).
 		Offset(offset).
 		Find(&users).Error; err != nil {
