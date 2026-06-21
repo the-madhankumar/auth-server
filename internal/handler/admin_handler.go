@@ -16,7 +16,7 @@ type AdminAuthService interface {
 	LockUser(userID, adminID, ipAddress, userAgent string) error
 	UnlockUser(userID, adminID, ipAddress, userAgent string) error
 	DeleteAccount(userID string) error
-	GetUsers(limit int, offset int)  (models.PaginatedUsers, error)
+	GetUsers(limit, offset int)  (models.PaginatedUsers, error)
 }
 
 type AdminHandler struct {

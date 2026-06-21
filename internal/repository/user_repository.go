@@ -19,7 +19,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 // GetUsers get all users by limit and offset [Pagination]
-func (r *UserRepository) GetUsers(limit int, offset int) (models.PaginatedUsers, error) {
+func (r *UserRepository) GetUsers(limit, offset int) (models.PaginatedUsers, error) {
 	var users []models.User
 	var total int64
 
