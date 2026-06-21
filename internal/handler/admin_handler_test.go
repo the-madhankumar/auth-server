@@ -34,7 +34,7 @@ func (m *mockAdminSvc) DeleteAccount(userID string) error {
 	return m.deleteErr
 }
 
-func (m *mockAdminSvc) GetUsers(limit int, offset int) (models.PaginatedUsers, error) {
+func (m *mockAdminSvc) GetUsers(limit, offset int) (models.PaginatedUsers, error) {
     return m.users, m.getUsersErr
 }
 
